@@ -29,7 +29,7 @@ namespace httpserver
 
                 try
                 {
-                    
+                    string message = sr.ReadLine();
                     sw.Write("HTTP/1.0 200 Ok\r\n");
                     sw.Write("\r\n");
                     sw.Write("Hello world");
