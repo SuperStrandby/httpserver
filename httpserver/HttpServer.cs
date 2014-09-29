@@ -24,9 +24,9 @@ namespace httpserver
             var sw = new StreamWriter(ns) {AutoFlush = true};
 
 
-            sw.Write("http/1.0 200 Ok\r\n" +
-                     "\r\n" +
-                     "Hello World");
+            sw.Write("http/1.0 200 Ok\r\n");
+            sw.Write("\r\n");
+            sw.Write("Hello world");
 
             ns.Close();
             connectionSocket.Close();
