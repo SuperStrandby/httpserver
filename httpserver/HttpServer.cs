@@ -27,12 +27,19 @@ namespace httpserver
                 var sw = new StreamWriter(ns) {AutoFlush = true};
 
 
+
                 try
                 {
                     string message = sr.ReadLine();
-                    sw.Write("HTTP/1.0 200 Ok\r\n");
-                    sw.Write("\r\n");
-                    sw.Write("Hello world");
+                    string[] words = message.Split(' ');
+                    string message1 = words[1].Replace("/", "");
+
+                    sw.Write(
+                        "HTTP/1.0 200 Ok\r\n" +
+                        "\r\n" + 
+                        "You have requested file: {0}", message1);
+                    
+                    
                 }
                 finally
                 {
@@ -42,7 +49,10 @@ namespace httpserver
                 }
 
                 
+
+                
             }
+
         }
     }
 }
