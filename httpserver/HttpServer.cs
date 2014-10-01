@@ -50,9 +50,6 @@ namespace httpserver
                     serverSocket.Stop();
                 }
 
-
-
-
             }
 
         }

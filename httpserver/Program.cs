@@ -10,6 +10,7 @@ namespace httpserver
     {
         static void Main(string[] args)
         {
+            Console.WriteLine("Server online");
             var server1 = new HttpServer();
             server1.StartServer();
         }
