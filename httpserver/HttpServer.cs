@@ -25,53 +25,48 @@ namespace httpserver
                 Stream ns = connectionSocket.GetStream();
 
                 var sr = new StreamReader(ns);
-                var sw = new StreamWriter(ns) { AutoFlush = true };
+                var sw = new StreamWriter(ns) {AutoFlush = true};
 
-                try
+                
                 {
-                    string message = sr.ReadLine();
-
-
-                    sw.Write(
-                        "HTTP/1.0 200 Ok\r\n" +
-                        "\r\n" +
-                        "Hello World");
-
-                    if (message != null)
+                    try
                     {
-                        SendRequestedFile(GetRequestedFilePath(message), sw);
+                        string message = sr.ReadLine();
+                        string[] words = message.Split(' ');
+                        string filename = words[1];
+                        string fullfilename = _rootCatalog + filename;
+
+                        if (words.Length == 0)
+                        {
+                            throw new Exception("Document Empty");
+                        }
+
+                        Console.WriteLine("You have requested: " + words[1]);
+                        FileStream fs = new FileStream(fullfilename, FileMode.Open, FileAccess.Read);
+                        fs.CopyTo(sw.BaseStream);
+
                     }
 
-                }
-                finally
-                {
-                    ns.Close();
-                    connectionSocket.Close();
-                    serverSocket.Stop();
-                }
+                    catch (Exception)
+                    {
+                        Console.WriteLine("Error");
+                    }
 
-            }
+                    finally
+                    {
+                        ns.Close();
+                        connectionSocket.Close();
+                        serverSocket.Stop();
+                    }
 
-        }
+                    
 
-        private string GetRequestedFilePath(string message)
-        {
-            string[] messageWords = message.Split(' ');
+                    
+                    //sw.Write(
+                    //    "HTTP/1.0 200 Ok\r\n" +
+                    //    "\r\n" +
+                    //    " Hellow World ");
 
-            return messageWords[1];
-        }
-
-        private void SendRequestedFile(string filePath, StreamWriter sw)
-        {
-
-            using (FileStream source = File.OpenRead(Path.Combine(_rootCatalog, filePath)))
-            {
-                byte[] bytes = new byte[1024];
-                UTF8Encoding temp = new UTF8Encoding(true);
-                while (source.Read(bytes, 0, bytes.Length) > 0)
-                {
-                    sw.Write(temp.GetString(bytes));
-                    Console.WriteLine(temp.GetString(bytes));
                 }
             }
         }
