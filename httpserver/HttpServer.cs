@@ -20,12 +20,15 @@ namespace httpserver
         /// The root folder for files
         /// </summary>
         private static readonly string _rootCatalog = @"C:\temp\";
-
+        /// <summary>
+        /// Used to define if the server is active
+        /// </summary>
         private bool _serverActive;
 
         /// <summary>
-        /// Method to start our webserver
+        /// Method to start the TcpListener on the defined DefaultPort and IPAddress.
         /// </summary>
+        /// <remarks>Queues the specified work to run on the ThreadPool and returns a task </remarks>
         public void StartServer()
         {
             _serverActive = true;
@@ -45,35 +48,38 @@ namespace httpserver
             
         }
 
+        /// <summary>
+        /// Deactivates the server
+        /// </summary>
         public void _deactivateServer()
         {
             _serverActive = false;
         }
 
+        /// <summary>
+        /// This methods handles the incoming connections on the default port.
+        /// </summary>
+        /// <param name="connectionSocket"></param>
         public void Connection(TcpClient connectionSocket)
         {
                 Console.WriteLine("Client connected on thread " + Thread.CurrentThread.GetHashCode());
                 Stream ns = connectionSocket.GetStream();
 
-                var sr = new StreamReader(ns);
-                var sw = new StreamWriter(ns) {AutoFlush = true};
-
-                
-                
+                var sr = new StreamReader(ns); // Makes a new StreamReader in the variable sr
+                var sw = new StreamWriter(ns) { AutoFlush = true }; // Makes a new StreamWriter in the variable sw
+            
                     try
                     {
                         string message = sr.ReadLine();
                         string[] words = message.Split(' ');
-                        string filename = words[1];
+                        string filename = words[1].Trim('/');
                         string fullfilename = _rootCatalog + filename;
 
                         if (words.Length == 0)
                         {
                             throw new Exception("Document Empty");
                         }
-
                         
-
                         sw.Write(
                             "HTTP/1.0 200 Ok\r\n" +
                             "\r\n" +
@@ -98,12 +104,7 @@ namespace httpserver
                         connectionSocket.Close();
                     }
 
-                    
-
-                    
-                    
-
-                
+  
             }
       }
 }
