@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -24,6 +25,10 @@ namespace httpserver
         /// Used to define if the server is active
         /// </summary>
         private bool _serverActive;
+        /// <summary>
+        /// Logging
+        /// </summary>
+        readonly EventLog _mylog = new EventLog();
 
         /// <summary>
         /// Method to start the TcpListener on the defined DefaultPort and IPAddress.
@@ -31,6 +36,7 @@ namespace httpserver
         /// <remarks>Queues the specified work to run on the ThreadPool and returns a task </remarks>
         public void StartServer()
         {
+            _mylog.Source = "my webserver";
             _serverActive = true;
 
             TcpListener serverSocket = new TcpListener(IPAddress.Parse("127.0.0.1"), DefaultPort);
@@ -62,14 +68,16 @@ namespace httpserver
         /// <param name="connectionSocket"></param>
         public void Connection(TcpClient connectionSocket)
         {
-                Console.WriteLine("Client connected on thread " + Thread.CurrentThread.GetHashCode());
-                Stream ns = connectionSocket.GetStream();
+            _mylog.WriteEntry("Server started", EventLogEntryType.Information, 1);
+            Console.WriteLine("Client connected on thread " + Thread.CurrentThread.GetHashCode());
+            Stream ns = connectionSocket.GetStream();
 
-                var sr = new StreamReader(ns); // Makes a new StreamReader in the variable sr
-                var sw = new StreamWriter(ns) { AutoFlush = true }; // Makes a new StreamWriter in the variable sw
+            var sr = new StreamReader(ns); // Makes a new StreamReader in the variable sr
+            var sw = new StreamWriter(ns) { AutoFlush = true }; // Makes a new StreamWriter in the variable sw
             
                     try
                     {
+                        _mylog.WriteEntry("Request accepted", EventLogEntryType.Information, 2);
                         string message = sr.ReadLine();
                         string[] words = message.Split(' ');
                         string filename = words[1].Trim('/');
@@ -100,6 +108,7 @@ namespace httpserver
 
                     finally
                     {
+                        _mylog.WriteEntry("Server shutdown", EventLogEntryType.Information, 4);
                         ns.Close();
                         connectionSocket.Close();
                     }
