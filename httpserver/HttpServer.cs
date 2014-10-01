@@ -41,6 +41,7 @@ namespace httpserver
                             throw new Exception("Document Empty");
                         }
 
+                        sw.WriteLine("You have requested: {0}", filename);
                         Console.WriteLine("You have requested: " + words[1]);
                         FileStream fs = new FileStream(fullfilename, FileMode.Open, FileAccess.Read);
                         fs.CopyTo(sw.BaseStream);
