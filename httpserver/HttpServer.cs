@@ -103,6 +103,7 @@ namespace httpserver
 
                     catch (Exception)
                     {
+                        _mylog.WriteEntry("Error", EventLogEntryType.Error, 3);
                         Console.WriteLine("Error");
                     }
 
