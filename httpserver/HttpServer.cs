@@ -88,24 +88,19 @@ namespace httpserver
                         string fullfilename = _rootCatalog + fileName;
                         string extensions = Path.GetExtension(fullfilename);
                         ContentHandler type = new ContentHandler(extensions);
+                        StatusCodes status = new StatusCodes();
                        
                         
                         
                         
                         if (req.Protocol != "HTTP/1.0" && req.Protocol != "HTTP/1.1") //Performs a check to see if its the correct protocol
                         {
-                            sw.Write(
-                            "HTTP/1.0 400 Bad Request\r\n" +
-                            "\r\n" + 
-                            "The Http protocol you have chosen are invalid"); 
+                            sw.Write(status.InvalidProtocol()); 
                         }
 
                         if (req.Method != "GET" && req.Method != "POST") //Performs a check to see if its the correct method
                         {
-                            sw.Write(
-                            "HTTP/1.0 400 Bad Request\r\n" +
-                            "\r\n" +
-                            "Bad Request did not send a Get or Post request");
+                            sw.Write(status.BadRequest());
                         }
 
                         if (File.Exists(fullfilename)) //Performs a check to see if file exists
@@ -120,10 +115,8 @@ namespace httpserver
                         }
                         else
                         {
-                            sw.Write( //if file is not found then writes 404 status code
-                            "HTTP/1.0 404 Not found\r\n" +
-                            "\r\n" +
-                            "File not found");
+                            sw.Write(status.FileNotFound()); //if file is not found then writes 404 status code
+                            
                         }
                        
 
