@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -78,23 +79,41 @@ namespace httpserver
                     try
                     {
                         _mylog.WriteEntry("Request accepted", EventLogEntryType.Information, 2);
-                        string message = sr.ReadLine();
-                        string[] words = message.Split(' ');
-                        string filename = words[1].Trim('/');
-                        string fullfilename = _rootCatalog + filename;
+                        string requestLine = sr.ReadLine();
+                        string fileName = GetFileName(requestLine);
+                        string fullfilename = _rootCatalog + fileName;
 
-                        if (words.Length == 0)
+                        Request req = new Request(requestLine);
+                        
+                        if (File.Exists(fullfilename))
                         {
-                            throw new Exception("Document Empty");
+                            sw.Write(
+                                "HTTP/1.0 200 Ok\r\n" +
+                                "\r\n" +
+                                "Server version 1.0\r\n" +
+                                "You have requested: {1}" + "\r\n" +
+                                "Date: {0}\r\n", DateTime.Now, fileName;
+
                         }
                         
-                        sw.Write(
-                            "HTTP/1.0 200 Ok\r\n" +
-                            "\r\n" +
-                            "Server version 1.0\r\n" +
-                            "Date: {0}\r\n", DateTime.Now);
+                        if (req.Protocol != "HTTP/1.0" && req.Protocol != "HTTP/1.1") 
+                        {
+                            sw.Write(
+                            "HTTP/1.0 400 Bad Request\r\n" +
+                            "\r\n" + 
+                            "The Http protocol you have chosen are invalid"); 
+                        }
 
-                        sw.Write("You have requested: {0}" + "\r\n", filename);
+                        if (req.Method != "GET" && req.Method != "POST")
+                        {
+                            sw.Write(
+                            "HTTP/1.0 400 Bad Request\r\n" +
+                            "\r\n" +
+                            "Bad Request did not send a Get or Post request");
+                        }
+                       
+
+                        
                         Console.WriteLine("You have requested: " + words[1]);
                         FileStream fs = new FileStream(fullfilename, FileMode.Open, FileAccess.Read);
                         fs.CopyTo(sw.BaseStream);
@@ -114,8 +133,19 @@ namespace httpserver
                         connectionSocket.Close();
                     }
 
+            
   
             }
-      }
-}
+
+        public string GetFileName(String request)
+        {
+            string[] words = request.Split(' ');
+            
+
+            return request + words[1];
+
+        }
+
+      }// end of class
+} //end of namespace
 
