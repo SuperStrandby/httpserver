@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace httpserver
 {
+    /// <summary>
+    /// Class to handle our file extensions
+    /// </summary>
     public class ContentHandler
     {
         private readonly string _exstensions;

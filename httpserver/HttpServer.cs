@@ -100,7 +100,7 @@ namespace httpserver
                             "The Http protocol you have chosen are invalid"); 
                         }
 
-                        if (req.Method != "GET" && req.Method != "POST")
+                        if (req.Method != "GET" && req.Method != "POST") //Performs a check to see if its the correct method
                         {
                             sw.Write(
                             "HTTP/1.0 400 Bad Request\r\n" +
@@ -108,7 +108,7 @@ namespace httpserver
                             "Bad Request did not send a Get or Post request");
                         }
 
-                        if (File.Exists(fullfilename)) 
+                        if (File.Exists(fullfilename)) //Performs a check to see if file exists
                         {
                             sw.Write(
                                 "HTTP/1.0 200 Ok\r\n" +
@@ -120,7 +120,7 @@ namespace httpserver
                         }
                         else
                         {
-                            sw.Write(
+                            sw.Write( //if file is not found then writes 404 status code
                             "HTTP/1.0 404 Not found\r\n" +
                             "\r\n" +
                             "File not found");
@@ -130,7 +130,7 @@ namespace httpserver
                         
                         Console.WriteLine("You have requested: " + req.Uri);
                         Console.WriteLine(type.Exstensiontype());
-                        FileStream fs = new FileStream(fullfilename, FileMode.Open, FileAccess.Read);
+                        FileStream fs = new FileStream(fullfilename, FileMode.Open, FileAccess.Read); 
                         fs.CopyTo(sw.BaseStream);
 
                     }

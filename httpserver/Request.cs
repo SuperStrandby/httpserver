@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace httpserver
 {
+    /// <summary>
+    /// Class used to refactor
+    /// </summary>
     public class Request
     {
         public string Method { get; set; }
