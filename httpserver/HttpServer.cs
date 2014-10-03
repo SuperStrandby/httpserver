@@ -79,11 +79,15 @@ namespace httpserver
                     try
                     {
                         _mylog.WriteEntry("Request accepted", EventLogEntryType.Information, 2);
+                        
                         string requestLine = sr.ReadLine();
-                        string fileName = GetFileName(requestLine);
-                        string fullfilename = _rootCatalog + fileName;
-
                         Request req = new Request(requestLine);
+                        
+                        
+                        string fileName = req.Uri;
+                        string fullfilename = _rootCatalog + fileName;
+                        string extensions = Path.GetExtension(fullfilename);
+                        ContentHandler type = new ContentHandler(extensions);
                         
                         if (File.Exists(fullfilename))
                         {
@@ -92,7 +96,7 @@ namespace httpserver
                                 "\r\n" +
                                 "Server version 1.0\r\n" +
                                 "You have requested: {1}" + "\r\n" +
-                                "Date: {0}\r\n", DateTime.Now, fileName;
+                                "Date: {0}\r\n", DateTime.Now, fileName);
 
                         }
                         
@@ -114,7 +118,8 @@ namespace httpserver
                        
 
                         
-                        Console.WriteLine("You have requested: " + words[1]);
+                        Console.WriteLine("You have requested: " + req.Uri);
+                        Console.WriteLine(type.Exstensiontype());
                         FileStream fs = new FileStream(fullfilename, FileMode.Open, FileAccess.Read);
                         fs.CopyTo(sw.BaseStream);
 
@@ -137,14 +142,7 @@ namespace httpserver
   
             }
 
-        public string GetFileName(String request)
-        {
-            string[] words = request.Split(' ');
-            
-
-            return request + words[1];
-
-        }
+        
 
       }// end of class
 } //end of namespace

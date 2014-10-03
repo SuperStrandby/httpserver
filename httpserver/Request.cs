@@ -14,7 +14,12 @@ namespace httpserver
 
         public Request(String request)
         {
-            
+           
+            var words = request.Split(' ');
+            Method = words[0];
+            Uri = words[1].Trim('/');
+            Protocol = words[2];
+
         }
     }
 }
