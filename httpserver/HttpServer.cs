@@ -88,19 +88,11 @@ namespace httpserver
                         string fullfilename = _rootCatalog + fileName;
                         string extensions = Path.GetExtension(fullfilename);
                         ContentHandler type = new ContentHandler(extensions);
+                       
                         
-                        if (File.Exists(fullfilename))
-                        {
-                            sw.Write(
-                                "HTTP/1.0 200 Ok\r\n" +
-                                "\r\n" +
-                                "Server version 1.0\r\n" +
-                                "You have requested: {1}" + "\r\n" +
-                                "Date: {0}\r\n", DateTime.Now, fileName);
-
-                        }
                         
-                        if (req.Protocol != "HTTP/1.0" && req.Protocol != "HTTP/1.1") 
+                        
+                        if (req.Protocol != "HTTP/1.0" && req.Protocol != "HTTP/1.1") //Performs a check to see if its the correct protocol
                         {
                             sw.Write(
                             "HTTP/1.0 400 Bad Request\r\n" +
@@ -114,6 +106,24 @@ namespace httpserver
                             "HTTP/1.0 400 Bad Request\r\n" +
                             "\r\n" +
                             "Bad Request did not send a Get or Post request");
+                        }
+
+                        if (File.Exists(fullfilename)) 
+                        {
+                            sw.Write(
+                                "HTTP/1.0 200 Ok\r\n" +
+                                "\r\n" +
+                                "Server version 1.0\r\n" +
+                                "You have requested: {1}" + "\r\n" +
+                                "Date: {0}\r\n", DateTime.Now, fileName);
+
+                        }
+                        else
+                        {
+                            sw.Write(
+                            "HTTP/1.0 404 Not found\r\n" +
+                            "\r\n" +
+                            "File not found");
                         }
                        
 
